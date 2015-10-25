@@ -16,12 +16,12 @@ import (
 const PERM = 0755
 
 // holds the name of the directory to which the files are written
-type connection struct {
+type Connection struct {
 	dir string
 }
 
 // NewConnection creates our root data dir
-func NewConnection(dir string) (*connection, error) {
+func NewConnection(dir string) (*Connection, error) {
 	if dir[:len(dir)-1] == "/" {
 		dir = dir[:len(dir)-2]
 	}
@@ -30,11 +30,11 @@ func NewConnection(dir string) (*connection, error) {
 		return nil, err
 	}
 
-	return &connection{dir}, nil
+	return &Connection{dir}, nil
 }
 
 // Get retrieves the contents of the given file and unmarshals it to the given interface
-func (c *connection) Get(key string, v interface{}) error {
+func (c *Connection) Get(key string, v interface{}) error {
 	contents, err := ioutil.ReadFile(mkkey(c.dir, key))
 	if err != nil {
 		return err
@@ -48,7 +48,7 @@ func (c *connection) Get(key string, v interface{}) error {
 }
 
 // Put marshals and writes the contents of the given interface to the given file
-func (c *connection) Put(key string, v interface{}) error {
+func (c *Connection) Put(key string, v interface{}) error {
 	contents, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -62,7 +62,7 @@ func (c *connection) Put(key string, v interface{}) error {
 }
 
 // Del deletes the given file
-func (c *connection) Del(key string) error {
+func (c *Connection) Del(key string) error {
 	err := os.Remove(mkkey(c.dir, key))
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func (c *connection) Del(key string) error {
 }
 
 // DellAll deletes the top level data dir
-func (c *connection) DelAll() error {
+func (c *Connection) DelAll() error {
 	err := os.RemoveAll(c.dir)
 	if err != nil {
 		return err
