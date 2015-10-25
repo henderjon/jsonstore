@@ -10,7 +10,7 @@ versa.
 
 Because I needed one and every other one is more than I needed.
 
-### My qunt Flo wrote one, why should I use yours?
+### My aunt Flo wrote one, why should I use yours?
 
 You probably shouldn't. Hers is most likely better.
 
