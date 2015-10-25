@@ -16,12 +16,17 @@ import (
 const PERM = 0755
 
 // holds the name of the directory to which the files are written
-type Connection struct {
-	dir string
+type Bucket struct {
+	prefix string
 }
 
 // NewConnection creates our root data dir
-func NewConnection(dir string) (*Connection, error) {
+func Open(dir string) (*Bucket, error) {
+
+	if len(dir) == 0 {
+		return &Bucket{""}, nil
+	}
+
 	if dir[:len(dir)-1] == "/" {
 		dir = dir[:len(dir)-2]
 	}
@@ -30,12 +35,12 @@ func NewConnection(dir string) (*Connection, error) {
 		return nil, err
 	}
 
-	return &Connection{dir}, nil
+	return &Bucket{dir}, nil
 }
 
 // Get retrieves the contents of the given file and unmarshals it to the given interface
-func (c *Connection) Get(key string, v interface{}) error {
-	contents, err := ioutil.ReadFile(mkkey(c.dir, key))
+func (b *Bucket) Get(key string, v interface{}) error {
+	contents, err := ioutil.ReadFile(b.mkkey(key))
 	if err != nil {
 		return err
 	}
@@ -48,13 +53,13 @@ func (c *Connection) Get(key string, v interface{}) error {
 }
 
 // Put marshals and writes the contents of the given interface to the given file
-func (c *Connection) Put(key string, v interface{}) error {
+func (b *Bucket) Put(key string, v interface{}) error {
 	contents, err := json.Marshal(v)
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(mkkey(c.dir, key), contents, PERM)
+	err = ioutil.WriteFile(b.mkkey(key), contents, PERM)
 	if err != nil {
 		return err
 	}
@@ -62,8 +67,8 @@ func (c *Connection) Put(key string, v interface{}) error {
 }
 
 // Del deletes the given file
-func (c *Connection) Del(key string) error {
-	err := os.Remove(mkkey(c.dir, key))
+func (b *Bucket) Del(key string) error {
+	err := os.Remove(b.mkkey(key))
 	if err != nil {
 		return err
 	}
@@ -71,8 +76,8 @@ func (c *Connection) Del(key string) error {
 }
 
 // DellAll deletes the top level data dir
-func (c *Connection) DelAll() error {
-	err := os.RemoveAll(c.dir)
+func (b *Bucket) DelAll() error {
+	err := os.RemoveAll(b.prefix)
 	if err != nil {
 		return err
 	}
@@ -80,6 +85,9 @@ func (c *Connection) DelAll() error {
 }
 
 // mkkey creates the full path to the file given the prefix and the key
-func mkkey(prefix, key string) string {
-	return prefix + "/" + key
+func (b *Bucket) mkkey(key string) string {
+	if len(b.prefix) > 0 {
+		b.prefix += "/"
+	}
+	return b.prefix + key
 }
