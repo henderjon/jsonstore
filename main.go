@@ -1,4 +1,9 @@
-// Package json-store reads/writes data to json flat files
+/*
+Package json-store reads/writes data to json flat files
+
+Given a top level directory, `Get`, `Put`, and `Del` json encoded flat files of
+a given name.
+*/
 package jsonstore
 
 import (
@@ -15,7 +20,7 @@ type connection struct {
 	dir string
 }
 
-// create our root data dir
+// NewConnection creates our root data dir
 func NewConnection(dir string) (*connection, error) {
 	if dir[:len(dir)-1] == "/" {
 		dir = dir[:len(dir)-2]
@@ -28,7 +33,7 @@ func NewConnection(dir string) (*connection, error) {
 	return &connection{dir}, nil
 }
 
-// retrieve the contents of the given file and unmarshal it to the given interface
+// Get retrieves the contents of the given file and unmarshals it to the given interface
 func (c *connection) Get(key string, v interface{}) error {
 	contents, err := ioutil.ReadFile(mkkey(c.dir, key))
 	if err != nil {
@@ -42,7 +47,7 @@ func (c *connection) Get(key string, v interface{}) error {
 	return nil
 }
 
-// marshal and write the contents of the given interface to the given file
+// Put marshals and writes the contents of the given interface to the given file
 func (c *connection) Put(key string, v interface{}) error {
 	contents, err := json.Marshal(v)
 	if err != nil {
@@ -56,7 +61,7 @@ func (c *connection) Put(key string, v interface{}) error {
 	return nil
 }
 
-// delete the given file
+// Del deletes the given file
 func (c *connection) Del(key string) error {
 	err := os.Remove(mkkey(c.dir, key))
 	if err != nil {
@@ -65,7 +70,7 @@ func (c *connection) Del(key string) error {
 	return nil
 }
 
-// delete the top level data dir
+// DellAll deletes the top level data dir
 func (c *connection) DelAll() error {
 	err := os.RemoveAll(c.dir)
 	if err != nil {
@@ -74,7 +79,7 @@ func (c *connection) DelAll() error {
 	return nil
 }
 
-// create the full path to the file given the prefix and the key
+// mkkey creates the full path to the file given the prefix and the key
 func mkkey(prefix, key string) string {
 	return prefix + "/" + key
 }
