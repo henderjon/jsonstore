@@ -1,7 +1,7 @@
 // Package json-store reads/writes data to json flat files
 package jsonstore
 
-import(
+import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -17,8 +17,8 @@ type connection struct {
 
 // create our root data dir
 func NewConnection(dir string) (*connection, error) {
-	if dir[:len(dir) - 1] == "/" {
-		dir = dir[:len(dir) - 2]
+	if dir[:len(dir)-1] == "/" {
+		dir = dir[:len(dir)-2]
 	}
 
 	if err := os.MkdirAll(dir, PERM); err != nil {

@@ -1,9 +1,10 @@
 package jsonstore
 
 import "testing"
+
 // import "fmt"
 
-func TestConnect(t *testing.T){
+func TestConnect(t *testing.T) {
 	_, err := NewConnection("./test/store/depth/")
 	if err != nil {
 		t.Error(err.Error())
@@ -14,7 +15,7 @@ type TestPayload struct {
 	Dig string
 }
 
-func TestPutGet(t *testing.T){
+func TestPutGet(t *testing.T) {
 	c, err := NewConnection("./test/store/depth/")
 	if err != nil {
 		t.Error(err.Error())
