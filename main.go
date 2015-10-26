@@ -18,7 +18,8 @@ const PERM = 0755
 
 // var MISS = errors.New("File Not Found")
 
-// holds the name of the directory to which the files are written
+// Bucket holds the name of the directory to which the files are written and
+// has all the attached methods
 type Bucket struct {
 	prefix string
 }
@@ -41,8 +42,8 @@ func Open(dir string) (*Bucket, error) {
 	return &Bucket{dir}, nil
 }
 
-// Get retrieves the contents of the given file and unmarshals it to the given interface
-// os.IsNotExist ought to be used to discover if a `Get` can't find a file to avoid panic
+// Get retrieves the contents of the given file and unmarshals it to the given interface.
+// `os.IsNotExist` ought to be used to discover if a `Get` couldn't find a file
 func (b *Bucket) Get(key string, v interface{}) error {
 	contents, err := ioutil.ReadFile(b.mkkey(key))
 	// if os.IsNotExist(err) {
