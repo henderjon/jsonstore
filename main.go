@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	// "log"
 	// "errors"
 )
 
@@ -31,8 +32,8 @@ func Open(dir string) (*Bucket, error) {
 		return &Bucket{""}, nil
 	}
 
-	if dir[:len(dir)-1] == "/" {
-		dir = dir[:len(dir)-2]
+	if dir[len(dir)-1:] == "/" {
+		dir = dir[:len(dir)-1]
 	}
 
 	if err := os.MkdirAll(dir, PERM); err != nil {
@@ -93,7 +94,8 @@ func (b *Bucket) DelAll() error {
 	return nil
 }
 
-// mkkey creates the full path to the file given the prefix and the key
+// mkkey creates the full path to the file given the prefix and the key.
+// Assumes you do NOT want to write to "/"
 func (b *Bucket) mkkey(key string) string {
 	if len(b.prefix) > 0 {
 		b.prefix += "/"
