@@ -1,8 +1,10 @@
 package jsonstore
 
 import "testing"
+import "os"
 
 // import "fmt"
+// import "log"
 
 func TestConnect(t *testing.T) {
 	_, err := Open("./test/store/depth/")
@@ -75,6 +77,26 @@ func TestPutGet2(t *testing.T) {
 
 	err = c.Del("test.json")
 	if err != nil {
+		t.Error(err.Error())
+	}
+
+	err = c.DelAll()
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+}
+
+func TestGetMiss(t *testing.T) {
+	c, err := Open("")
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	r := &TestPayload{}
+	err = c.Get("fnf.json", r)
+	// this should miss
+	if os.IsExist(err) {
 		t.Error(err.Error())
 	}
 

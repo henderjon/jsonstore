@@ -10,10 +10,13 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	// "errors"
 )
 
 // default dir/file permission
 const PERM = 0755
+
+// var MISS = errors.New("File Not Found")
 
 // holds the name of the directory to which the files are written
 type Bucket struct {
@@ -41,6 +44,10 @@ func Open(dir string) (*Bucket, error) {
 // Get retrieves the contents of the given file and unmarshals it to the given interface
 func (b *Bucket) Get(key string, v interface{}) error {
 	contents, err := ioutil.ReadFile(b.mkkey(key))
+	// if os.IsNotExist(err) {
+	// 	return MISS
+	// }
+
 	if err != nil {
 		return err
 	}
