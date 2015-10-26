@@ -43,7 +43,7 @@ func Open(dir string) (*Bucket, error) {
 }
 
 // Get retrieves the contents of the given file and unmarshals it to the given interface.
-// `os.IsNotExist` ought to be used to discover if a `Get` couldn't find a file
+// To determine if `Get` couldn't find a file use `os.IsNotExist`
 func (b *Bucket) Get(key string, v interface{}) error {
 	contents, err := ioutil.ReadFile(b.mkkey(key))
 	// if os.IsNotExist(err) {
