@@ -76,6 +76,15 @@ func (b *Bucket) Put(key string, v interface{}) error {
 	return nil
 }
 
+// PutRaw assumes the given value is valid JSON and writes it to the given file
+func (b *Bucket) PutRaw(key string, v []byte) error {
+	err := ioutil.WriteFile(b.mkkey(key), v, PERM)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Del deletes the given file
 func (b *Bucket) Del(key string) error {
 	err := os.Remove(b.mkkey(key))

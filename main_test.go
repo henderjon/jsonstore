@@ -2,6 +2,7 @@ package jsonstore
 
 import "testing"
 import "os"
+import "encoding/json"
 
 // import "fmt"
 // import "log"
@@ -69,4 +70,36 @@ func TestFlow(t *testing.T) {
 		t.Error(err.Error())
 	}
 
+}
+
+func TestRaw(t *testing.T){
+	c, err := Open("./test")
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	data := TestPayload{"this"}
+
+	jsondata, err := json.Marshal(data)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// test Put
+	err = c.PutRaw("raw.json", jsondata)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	r := &TestPayload{}
+
+	// test Get
+	err = c.Get("raw.json", r)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	if r.Dig != "this" {
+		t.Error("failed to unmarshal")
+	}
 }
