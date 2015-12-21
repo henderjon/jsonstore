@@ -42,7 +42,7 @@ func Open(dir string) (*Bucket, error) {
 
 // Get retrieves the contents of the given file and unmarshals it to the given interface.
 // To determine if `Get` couldn't find a file use `os.IsNotExist`
-func (b *Bucket) Get(key string, v interface{}) error {
+func (b Bucket) Get(key string, v interface{}) error {
 	fh, err := os.Open(b.mkkey(key))
 	defer fh.Close()
 
@@ -58,7 +58,7 @@ func (b *Bucket) Get(key string, v interface{}) error {
 }
 
 // Put marshals and writes the contents of the given interface to the given file
-func (b *Bucket) Put(key string, v interface{}) error {
+func (b Bucket) Put(key string, v interface{}) error {
 	fh, err := os.Create(b.mkkey(key))
 	defer fh.Close()
 
@@ -74,7 +74,7 @@ func (b *Bucket) Put(key string, v interface{}) error {
 }
 
 // PutRaw assumes the given value is valid JSON and writes it to the given file
-func (b *Bucket) PutRaw(key string, v []byte) error {
+func (b Bucket) PutRaw(key string, v []byte) error {
 	fh, err := os.Create(b.mkkey(key))
 	defer fh.Close()
 
@@ -86,7 +86,7 @@ func (b *Bucket) PutRaw(key string, v []byte) error {
 }
 
 // Del deletes the given file
-func (b *Bucket) Del(key string) error {
+func (b Bucket) Del(key string) error {
 	err := os.Remove(b.mkkey(key))
 	if err != nil {
 		return err
@@ -95,7 +95,7 @@ func (b *Bucket) Del(key string) error {
 }
 
 // DellAll deletes the top level data dir
-func (b *Bucket) DelAll() error {
+func (b Bucket) DelAll() error {
 	err := os.RemoveAll(b.prefix)
 	if err != nil {
 		return err
@@ -105,7 +105,7 @@ func (b *Bucket) DelAll() error {
 
 // mkkey creates the full path to the file given the prefix and the key.
 // Assumes you do NOT want to write to "/"
-func (b *Bucket) mkkey(key string) string {
+func (b Bucket) mkkey(key string) string {
 	if len(b.prefix) > 0 {
 		b.prefix += "/"
 	}
