@@ -8,10 +8,7 @@ package jsonstore
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
-	// "log"
-	// "errors"
 )
 
 // default dir/file permission
@@ -46,16 +43,14 @@ func Open(dir string) (*Bucket, error) {
 // Get retrieves the contents of the given file and unmarshals it to the given interface.
 // To determine if `Get` couldn't find a file use `os.IsNotExist`
 func (b *Bucket) Get(key string, v interface{}) error {
-	contents, err := ioutil.ReadFile(b.mkkey(key))
-	// if os.IsNotExist(err) {
-	// 	return MISS
-	// }
+	fh, err := os.Open(b.mkkey(key))
+	defer fh.Close()
 
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(contents, v)
+	err = json.NewDecoder(fh).Decode(v)
 	if err != nil {
 		return err
 	}
@@ -64,12 +59,14 @@ func (b *Bucket) Get(key string, v interface{}) error {
 
 // Put marshals and writes the contents of the given interface to the given file
 func (b *Bucket) Put(key string, v interface{}) error {
-	contents, err := json.Marshal(v)
+	fh, err := os.Create(b.mkkey(key))
+	defer fh.Close()
+
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(b.mkkey(key), contents, PERM)
+	err = json.NewEncoder(fh).Encode(v)
 	if err != nil {
 		return err
 	}
@@ -78,7 +75,10 @@ func (b *Bucket) Put(key string, v interface{}) error {
 
 // PutRaw assumes the given value is valid JSON and writes it to the given file
 func (b *Bucket) PutRaw(key string, v []byte) error {
-	err := ioutil.WriteFile(b.mkkey(key), v, PERM)
+	fh, err := os.Create(b.mkkey(key))
+	defer fh.Close()
+
+	_, err = fh.Write(v)
 	if err != nil {
 		return err
 	}
